@@ -108,10 +108,10 @@ pipeline {
 				git checkout master 
 				git pull origin master
 				git merge develop
-				git push --force https://naxo1979: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@github.com/naxo1979/RepoDevOpsIPY_PUB_1_D --all
+				git push --force https://naxo1979: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@github.com/naxo1979/RepoDevOpsIPY_PUB_1_D --all
 				git checkout master 
 				git merge develop
-				git push --force https://naxo1979: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@github.com/naxo1979/RepoDevOpsIPY_PUB_1_D --all
+				git push --force https://naxo1979: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@github.com/naxo1979/RepoDevOpsIPY_PUB_1_D --all
 				'''
 			}
 		}
