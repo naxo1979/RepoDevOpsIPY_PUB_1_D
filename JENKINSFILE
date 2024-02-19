@@ -97,6 +97,7 @@ pipeline {
 				sh '''
 				rm result-Apitest.xml
 				rm BaseUrlApi.txt
+				git config --global user.na  me "naxo1979"
 				git checkout develop
 				git show
 				git status
