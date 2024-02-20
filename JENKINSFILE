@@ -97,8 +97,6 @@ pipeline {
 				sh '''
 				rm result-Apitest.xml
 				rm BaseUrlApi.txt
-				git config --global user.email "random@email.com"
-				git config --global user.na  me "naxo1979"
 				git checkout develop
 				git show
 				git status
@@ -109,10 +107,10 @@ pipeline {
 				git checkout master 
 				git pull origin master
 				git merge develop
-				git push --force https://naxo1979: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@github.com/naxo1979/RepoDevOpsIPY_PUB_1_D --all
+				git push --force https://github.com/naxo1979/RepoDevOpsIPY_PUB_1_D --all
 				git checkout master 
 				git merge develop
-				git push --force https://naxo1979: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@github.com/naxo1979/RepoDevOpsIPY_PUB_1_D --all
+				git push --force https://github.com/naxo1979/RepoDevOpsIPY_PUB_1_D --all
 				'''
 			}
 		}
