@@ -107,10 +107,10 @@ pipeline {
 				git checkout master 
 				git pull origin master
 				git merge develop
-				git push --force 'https://naxo1979:'more /var/lib/jenkins/secrets/tokendevops'@github.com/naxo1979/RepoDevOpsIPY_PUB_1_D' --all
+				git push https://naxo1979:`cat /var/lib/jenkins/secrets/tokendevops`@github.com/naxo1979/RepoDevOpsIPY_PUB_1_D.git
 				git checkout master 
 				git merge develop
-				git push --force 'https://naxo1979:'more /var/lib/jenkins/secrets/tokendevops'@github.com/naxo1979/RepoDevOpsIPY_PUB_1_D' --all
+				git push https://naxo1979:`cat /var/lib/jenkins/secrets/tokendevops`@github.com/naxo1979/RepoDevOpsIPY_PUB_1_D.git
 				'''
 			}
 		}
