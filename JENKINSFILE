@@ -1,7 +1,26 @@
 pipeline {
 	agent any
-		stages {
-		  stage('Get Code'){
+    stages {
+		stage('Clean'){
+			steps {
+			
+				//Borramos el stack:
+				sh 'aws cloudformation delete-stack --stack-name todo-list-aws'
+							
+				//WORKSPACE
+				echo WORKSPACE
+				
+				//Limpiamos WORKSPACE
+				sh '''
+				ls -lart
+				cleanWs()
+				ls -lart
+				'''
+				echo WORKSPACE
+			}
+		}
+	
+        stage('Get Code'){
             steps {
 			    sh '''
                     whoami
@@ -11,11 +30,74 @@ pipeline {
 				echo WORKSPACE
                 git branch: 'develop', url: 'https://github.com/naxo1979/RepoDevOpsIPY_PUB_1_D'
             }
-		  }
+        }
+		stage('Static Test'){
+		
+		    steps {
+			
+				//FLAKE8
+                sh '''
+                python3.6 -m flake8 --exit-zero --format=pylint src > flake8.out
+				'''	
+				recordIssues tools: [flake8(name: 'Flake8', pattern: 'flake8.out')], qualityGates: [[threshold: 10, type: 'TOTAL', unstable: true, failure: true], [threshold: 12, type: 'TOTAL', unstable: false, failure: true]], ignoreQualityGate: true
+				
+				//BANDIT
+				sh 'python3.6 -m bandit --exit-zero -r src -f custom -o bandit.out --msg-template "{abspath}:{line}: [{test_id}, {severity}] {msg}"'
+                
+				// Registar los resultados de bandit
+                recordIssues tools: [pyLint(name: 'Bandit', pattern: 'bandit.out')]
+				
+				//borramos_ficheros
+				sh 'rm -fr bandit.out flake8.out'
+			}
+		}
+		stage('Deploy'){
+		
+			steps {
+					
+				//Validacion de despliegue
+				sh 'sam validate --region us-east-1 --lint'
+
+				//Contruccion de recursos
+				echo WORKSPACE
+				sh 'sam build'
+				sh '''
+
+				
+				sam deploy \\
+					--stack-name todo-list-aws \\
+					--region us-east-1 \\
+					--force-upload \\
+					--no-confirm-changeset \\
+					--no-fail-on-empty-changeset \\
+					--config-env staging \\
+					--s3-bucket s3bucketdevops1d \\
+					| tee BaseUrlApi.txt \\
+				'''
+			}
+		}
+		stage('Rest Test'){
+		
+			steps {
+				
+				//lanzamos script
+				echo WORKSPACE
+				
+				sh 'chmod +x script.ksh'
+				sh '''
+                ksh ./script.ksh' && python3.6 -m pytest --junitxml=result-Apitest.xml test/integration/todoApiTest.py'
+                '''
+                junit 'result-Apitest.xml'
+			}		
+		}
+		
+		
 			stage('Promote'){
 			steps {
 				sh '''
- 				ssh -T git@github.com
+				rm result-Apitest.xml
+				rm BaseUrlApi.txt
+				ssh -T git@github.com
 				git checkout develop
 				git show
 				git status
@@ -32,8 +114,23 @@ pipeline {
 				git push 
 				'''
 			}
-		}		
-    }	
-}		
-			
-			
+		}
+			stage('CleanWS'){
+			steps {
+				echo WORKSPACE
+				sh '''
+				ls -lart
+				cleanWs()
+				ls -lart
+				'''
+				echo WORKSPACE
+				
+				//Borramos el stack:
+				sh 'aws cloudformation delete-stack --stack-name todo-list-aws'
+			}
+		}
+	}
+}
+
+
+//PERFECTO!
