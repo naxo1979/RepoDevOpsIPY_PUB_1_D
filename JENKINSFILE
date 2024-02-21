@@ -94,10 +94,14 @@ pipeline {
 		
 			stage('Promote'){
 			steps {
+				//probamos acceso con el siguiente ssh:
+				sh'ssh -T git@github.com'
+				
+				//borramos ficheros innecesarios y hacemos el merge
 				sh '''
 				rm result-Apitest.xml
 				rm BaseUrlApi.txt
-				ssh -T git@github.com
+				
 				git checkout develop
 				git show
 				git status
