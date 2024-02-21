@@ -95,7 +95,7 @@ pipeline {
 			stage('Promote'){
 			steps {
 				//probamos acceso con el siguiente ssh:
-				sh'ssh -T git@github.com'
+				//sh'ssh -T git@github.com'
 				
 				//borramos ficheros innecesarios y hacemos el merge
 				sh '''
